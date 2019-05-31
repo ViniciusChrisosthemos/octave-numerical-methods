@@ -60,7 +60,32 @@
 #Gera uma matrix auxiliar, com uma coluna de 1´s a esquerda, zera a diagonal e troca o sinal dos valores
 #Gera um vetor [1,a0,b0,...,z0] para multiplicar as linhha da matriz auxiliar
 #Repete até i > MAXIT ou ErroTotal > RTOL
+function retval = pivot_test (A)
+  result = 0;
+  
+  for i=1 : columns(A)
+    pivo = A(i,i);
+    for j=i: rows(A)
+      A(j,i);
+      if(A(j,i) > pivo);
+        result = 1;
+        break
+      endif
+    endfor
+  endfor
+  
+  retval = result;
+endfunction
+
+
 function retval = jacobi(A, B, MAXIT = 20, RTOL = 1e-6 ,X0 = zeros(1,columns(A)))  
+  if(det(A) == 0)
+    printf('A matriz informada não possue solução, det(A) == 0\n');
+  endif
+  
+  if(pivot_test(A))
+    printf('A matriz informada não está pivotada.\n'); 
+  endif
   #Inicia variaveis
   length = columns(A);                                      
   diagonal_a = transpose(diag(A));                          
@@ -90,7 +115,7 @@ function retval = jacobi(A, B, MAXIT = 20, RTOL = 1e-6 ,X0 = zeros(1,columns(A))
       values(value) = (matrix(value-1,:) * old_values)/diagonal_a(value-1);
     endfor
     old_values = values;
-    i++
+    i++;
     
     #Calcula Erro total
     for j=1 : length
@@ -107,7 +132,7 @@ function retval = jacobi(A, B, MAXIT = 20, RTOL = 1e-6 ,X0 = zeros(1,columns(A))
     result(i,1) = values(i+1);
   endfor
   
-  retval = result
+  retval = result;
 endfunction
 
 if(__JACOBI_METHOD_TEST == 1)
@@ -126,6 +151,6 @@ if(__JACOBI_METHOD_TEST == 1)
      15]
    
   %funcao para o metodo de Jacobi
-  X = jacobi(A, B);
+  #X = jacobi(A, B);
 
 endif
